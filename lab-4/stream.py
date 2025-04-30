@@ -8,14 +8,14 @@ from tqdm import tqdm
 import os
 
 parser = argparse.ArgumentParser(description='Streams a file to a Spark Streaming Context')
-parser.add_argument('--folder', '-f', help='Data folder', required=True, type=str)
+parser.add_argument('--folder', '-f', help='Data folder', default="./Animals-10", required=True, type=str)
 parser.add_argument('--batch-size', '-b', help='Batch size', required=True, type=int)
 parser.add_argument('--endless', '-e', help='Enable endless stream',required=False, type=bool, default=False)
 parser.add_argument('--split','-s', help="training or test split", required=False, type=str, default='train')
 parser.add_argument('--sleep','-t', help="streaming interval", required=False, type=int, default=3)
 
 TCP_IP = "localhost"
-TCP_PORT = 6100
+TCP_PORT = 1412
 
 class Dataset:
     def __init__(self) -> None:
@@ -42,7 +42,7 @@ class Dataset:
         
         return batch
 
-    def sendCIFARBatchFileToSpark(self, tcp_connection, input_batch_file, batch_size, split="train"):
+    def sendAnimalBatchFileToSpark(self, tcp_connection, input_batch_file, batch_size, split="train"):
         if split == "train":
             total_batch = 50_000 / batch_size + 1
         else:
@@ -91,8 +91,8 @@ class Dataset:
 
         return connection, address
 
-    def streamCIFARDataset(self, tcp_connection, folder, batch_size):
-        CIFAR_BATCHES = [
+    def streamAnimalDataset(self, tcp_connection, folder, batch_size):
+        ANIMAL_BATCHES = [
             os.path.join(folder, 'data_batch_1'),
             os.path.join(folder, 'data_batch_2'),
             os.path.join(folder, 'data_batch_3'),
@@ -100,8 +100,8 @@ class Dataset:
             os.path.join(folder, 'data_batch_5'),
             os.path.join(folder, 'test_batch'),
         ]
-        CIFAR_BATCHES = CIFAR_BATCHES[:-1] if train_test_split=='train' else [CIFAR_BATCHES[-1]]
-        self.sendCIFARBatchFileToSpark(tcp_connection, CIFAR_BATCHES, batch_size, train_test_split)
+        ANIMAL_BATCHES = ANIMAL_BATCHES[:-1] if train_test_split=='train' else [ANIMAL_BATCHES[-1]]
+        self.sendAnimalBatchFileToSpark(tcp_connection, ANIMAL_BATCHES, batch_size, train_test_split)
 
 if __name__ == '__main__':
     args = parser.parse_args()
@@ -116,8 +116,8 @@ if __name__ == '__main__':
     
     if endless:
         while True:
-            dataset.streamCIFARDataset(tcp_connection, data_folder, batch_size)
+            dataset.streamAnimalDataset(tcp_connection, data_folder, batch_size)
     else:
-        dataset.streamCIFARDataset(tcp_connection, data_folder, batch_size)
+        dataset.streamAnimalDataset(tcp_connection, data_folder, batch_size)
 
     tcp_connection.close()

@@ -9,11 +9,11 @@ from pyspark.ml.linalg import VectorUDT
 from transforms import Transforms
 
 class SparkConfig:
-    appName = "CIFAR"
+    appName = "Animal"
     receivers = 4
     host = "local"
     stream_host = "localhost"
-    port = 6100
+    port = 1412
     batch_interval = 2
 
 from dataloader import DataLoader

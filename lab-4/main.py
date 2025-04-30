@@ -17,4 +17,4 @@ if __name__ == "__main__":
     svm = SVM(loss="squared_hinge", penalty="l2")
     trainer = Trainer(svm, "train", spark_config, transforms)
     trainer.train()
-    # trainer.predict()
+
